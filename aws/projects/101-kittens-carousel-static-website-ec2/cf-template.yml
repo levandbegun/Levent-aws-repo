@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template creates an EC2 instance to run a static website application deployed with Apache Web Server
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      GroupName: KittensSG
+      Tags:
+        - Key: Name
+          Value: Kittens
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  LeventSSD:
+    Type: "AWS::EC2::Volume"
+    Properties:
+      AvailabilityZone: !GetAtt KittensCarouselStaticWebsiteCFInstance.AvailabilityZone
+      Size: 2
+      Tags:
+        - Key: Name
+          Value: SSD
+      VolumeType: gp2
+  MountPoint:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: !Ref KittensCarouselStaticWebsiteCFInstance
+      VolumeId: !Ref LeventSSD
+      Device: /dev/sdf
+  LeventCFTemplate:
+    Type: "AWS::EC2::LaunchTemplate"
+    Properties:
+      LaunchTemplateName: LT-test
+      LaunchTemplateData:
+        ImageId: ami-0c94855ba95c71c99
+        InstanceType: t2.micro
+        UserData: 
+          Fn::Base64:
+            !Sub |
+              #! /bin/bash
+              yum update -y
+              yum install -y httpd
+              cd /var/www/html
+              wget https://raw.githubusercontent.com/yurttav/aws_workshops/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/index.html
+              wget https://raw.githubusercontent.com/yurttav/aws_workshops/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat0.jpg
+              wget https://raw.githubusercontent.com/yurttav/aws_workshops/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat1.jpg
+              wget https://raw.githubusercontent.com/yurttav/aws_workshops/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat2.jpg
+              systemctl start httpd
+              systemctl enable httpd
+              sleep 60
+              mkfs -t ext4 /dev/xvdf
+              mkdir /mnt/2nd-vol/
+              echo "/dev/xvdf       /mnt/2nd-vol   ext4    defaults,nofail 0       2" >> /etc/fstab
+              mount -a
+  KittensCarouselStaticWebsiteCFInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: baris
+      SecurityGroupIds:
+        - !Ref WebServerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: ApacheWebEC2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref BarisCFTemplate
+        Version: !GetAtt BarisCFTemplate.LatestVersionNumber
+Outputs:
+  InstanceId:
+    Description: InstanceId of the first EC2 instance
+    Value: !Ref KittensCarouselStaticWebsiteCFInstance
+  PublicDNS:
+    Description: Public DNS Name of the EC2 instance
+    Value: !Join 
+      - "://"
+      - - "http"
+        - !GetAtt 
+          - KittensCarouselStaticWebsiteCFInstance
+          - PublicDnsName
+  PublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt 
+      - KittensCarouselStaticWebsiteCFInstance
+      - PublicIp
+
+
+
+
+
