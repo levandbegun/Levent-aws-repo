@@ -10,10 +10,11 @@ db_endpoint = open("/home/ec2-user/dbserver.endpoint", 'r', encoding='UTF-8')
 # Configure mysql database
 app.config['MYSQL_DATABASE_HOST'] = db_endpoint.readline().strip()
 app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'clarusway-1'
+app.config['MYSQL_DATABASE_PASSWORD'] = '2072Levent_1'
 app.config['MYSQL_DATABASE_DB'] = 'phonebook'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 db_endpoint.close()
+
 mysql = MySQL()
 mysql.init_app(app)
 connection = mysql.connect()
@@ -38,6 +39,7 @@ def init_phonebook_db():
     VALUES
         ("Callahan", "1234567890"),
         ("Sergio Taco", "67854"),
+        ("Spring", 76656876567)
         ("Vincenzo Altobelli", "876543554");
     """
     cursor.execute(drop_table)
@@ -125,9 +127,9 @@ def find_records():
     if request.method == 'POST':
         keyword = request.form['username']
         persons = find_persons(keyword)
-        return render_template('index.html', persons=persons, keyword=keyword, show_result=True, developer_name='Student_Name')
+        return render_template('index.html', persons=persons, keyword=keyword, show_result=True, developer_name='2072Levent')
     else:
-        return render_template('index.html', show_result=False, developer_name='Student_Name')
+        return render_template('index.html', show_result=False, developer_name='2072Levent')
 
 
 # Write a function named `add_record` which inserts new record to the database using `GET` and `POST` methods,
@@ -138,20 +140,20 @@ def add_record():
     if request.method == 'POST':
         name = request.form['username']
         if name is None or name.strip() == "":
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, action_name='save', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, action_name='save', developer_name='2072Levent')
         elif name.isdecimal():
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Name of person should be text', show_result=False, action_name='save', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Name of person should be text', show_result=False, action_name='save', developer_name='2072Levent')
 
         phone_number = request.form['phonenumber']
         if phone_number is None or phone_number.strip() == "":
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number can not be empty', show_result=False, action_name='save', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number can not be empty', show_result=False, action_name='save', developer_name='2072Levent')
         elif not phone_number.isdecimal():
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number should be in numeric format', show_result=False, action_name='save', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number should be in numeric format', show_result=False, action_name='save', developer_name='2072Levent')
 
         result = insert_person(name, phone_number)
-        return render_template('add-update.html', show_result=True, result=result, not_valid=False, action_name='save', developer_name='Student_Name')
+        return render_template('add-update.html', show_result=True, result=result, not_valid=False, action_name='save', developer_name='2072Levent')
     else:
-        return render_template('add-update.html', show_result=False, not_valid=False, action_name='save', developer_name='Student_Name')
+        return render_template('add-update.html', show_result=False, not_valid=False, action_name='save', developer_name='2072Levent')
 
 # Write a function named `update_record` which updates the record in the db using `GET` and `POST` methods,
 # using template files named `add-update.html` given under `templates` folder
@@ -161,17 +163,17 @@ def update_record():
     if request.method == 'POST':
         name = request.form['username']
         if name is None or name.strip() == "":
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, action_name='update', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, action_name='update', developer_name='2072Levent')
         phone_number = request.form['phonenumber']
         if phone_number is None or phone_number.strip() == "":
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number can not be empty', show_result=False, action_name='update', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number can not be empty', show_result=False, action_name='update', developer_name='2072Levent')
         elif not phone_number.isdecimal():
-            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number should be in numeric format', show_result=False, action_name='update', developer_name='Student_Name')
+            return render_template('add-update.html', not_valid=True, message='Invalid input: Phone number should be in numeric format', show_result=False, action_name='update', developer_name='2072Levent')
 
         result = update_person(name, phone_number)
-        return render_template('add-update.html', show_result=True, result=result, not_valid=False, action_name='update', developer_name='Student_Name')
+        return render_template('add-update.html', show_result=True, result=result, not_valid=False, action_name='update', developer_name='2072Levent')
     else:
-        return render_template('add-update.html', show_result=False, not_valid=False, action_name='update', developer_name='Student_Name')
+        return render_template('add-update.html', show_result=False, not_valid=False, action_name='update', developer_name='2072Levent')
 
 # Write a function named `delete_record` which updates the record in the db using `GET` and `POST` methods,
 # using template files named `delete.html` given under `templates` folder
@@ -181,15 +183,15 @@ def delete_record():
     if request.method == 'POST':
         name = request.form['username']
         if name is None or name.strip() == "":
-            return render_template('delete.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, developer_name='Student_Name')
+            return render_template('delete.html', not_valid=True, message='Invalid input: Name can not be empty', show_result=False, developer_name='2072Levent')
         result = delete_person(name)
-        return render_template('delete.html', show_result=True, result=result, not_valid=False, developer_name='Student_Name')
+        return render_template('delete.html', show_result=True, result=result, not_valid=False, developer_name='2072Levent')
     else:
-        return render_template('delete.html', show_result=False, not_valid=False, developer_name='Student_Name')
+        return render_template('delete.html', show_result=False, not_valid=False, developer_name='2072Levent')
 
 
 # Add a statement to run the Flask application which can be reached from any host on port 80.
 if __name__== '__main__':
-    # init_phonebook_db()
-    # app.run(debug=True)
+    init_phonebook_db()
+    #app.run(debug=True)
     app.run(host='0.0.0.0', port=80) 
